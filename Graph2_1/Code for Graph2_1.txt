@@ -1,0 +1,6 @@
+> library(ggplot2)
+> graph2_1 <- read_csv("graph2_1.csv")
+> g1<-ggplot(graph2_1, aes(x=Time, y=Mean, group=Type)) +geom_line(aes(color=Type))+geom_point(shape = 23,size = 2,aes(colour = Type))+scale_color_brewer(palette="Set1")+labs(title = "Development Tracing Comparison")+ylab('MSD')
+> tiff("Graph2_1.tiff", units="in", width=10, height=8, res=600)
+> g1
+> dev.off()
