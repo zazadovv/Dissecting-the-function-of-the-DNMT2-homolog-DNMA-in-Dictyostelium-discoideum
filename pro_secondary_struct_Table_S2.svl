@@ -1,0 +1,80 @@
+#svl
+//	pro_secondary_struct.svl Report % protein 2o structure types
+//
+//	17-jan-2009 (ah) created
+//	
+//	DESCRIPTION
+//
+//	Prints the percentage of amino acid residues with various secondary
+//	structure types to the SVL commands window.
+//	
+//	USAGE
+//	
+//	1. Save this file to your hard disk. 
+//	
+//	For it to be available for use by all of the users of MOE, create 
+//	a directory called $MOE/lib/svl/patch/run and save this file to 
+//	that directory. eg on Windows and Linux, this might be: 
+//	c:\moe\lib\svl\patch\run\pro_secondary_struct.svl
+//	/usr/local/moe/lib/svl/patch/run/pro_secondary_struct.svl
+//	
+//	For the script to be available for use by a single user, then
+//	it is best to create a directory in your home directory called
+//	svl, and create a directory called run in that directory. Save
+//	this file into that directory. eg on Windows and Linux, this
+//	might be:
+//	
+//	c:\Documents and Settings\user_name\svl\run\pro_secondary_struct.svl
+//	/usr/people/user_name/svl/run/pro_secondary_struct.svl
+//	
+//	2. Run this file.
+//	  (a) From the MOE | File | Open panel, select this file 
+//	      and click the "Run" button.
+//	
+//	  (b) At the SVL command line, type:
+//	      run 'pro_secondary_struct.svl'
+//	
+// COPYRIGHT (C) 2009 CHEMICAL COMPUTING GROUP INC.  ALL RIGHTS RESERVED.
+//
+// PERMISSION TO USE, COPY, MODIFY AND DISTRIBUTE THIS SOFTWARE IS HEREBY
+// GRANTED PROVIDED THAT: (1) UNMODIFIED OR FUNCTIONALLY EQUIVALENT CODE
+// DERIVED FROM THIS SOFTWARE MUST CONTAIN THIS NOTICE; (2) ALL CODE DERIVED
+// FROM THIS SOFTWARE MUST ACKNOWLEDGE THE AUTHOR(S) AND INSTITUTION(S); (3)
+// THE NAMES OF THE AUTHOR(S) AND INSTITUTION(S) NOT BE USED IN ADVERTISING
+// OR PUBLICITY PERTAINING TO THE DISTRIBUTION OF THE SOFTWARE WITHOUT
+// SPECIFIC, WRITTEN PRIOR PERMISSION; (4) ALL CODE DERIVED FROM THIS SOFTWARE
+// BE EXECUTED WITH THE MOLECULAR OPERATING ENVIRONMENT (MOE) LICENSED FROM
+// CHEMICAL COMPUTING GROUP INC.
+//
+// CHEMICAL COMPUTING GROUP INC. DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+// SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
+// AND IN NO EVENT SHALL CHEMICAL COMPUTING GROUP INC. BE LIABLE FOR ANY
+// SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+// RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+// CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+// CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+#set main pro_Secondary_Struct
+
+local function _pro_Secondary_Struct chain
+    local res, frqs;
+
+    res = cat cResidues chain;
+    res = res | rIsAmino res;
+    write ['Chain {} {}, {} amino acid residues\n',cName chain, cHeader chain, 
+	length res
+    ];
+
+    if not length res then 
+	write '\n';
+	return[];
+    endif
+
+    frqs=freq[x_id R_SEGMENT_TYPES,indexof[rActualSegment res,R_SEGMENT_TYPES]];
+    apt write ['{15}{5} residues{n:7.2f}%\n', R_SEGMENT_TYPES, frqs,
+	(100/length res)*frqs
+    ];
+    write '\n';
+endfunction
+
+function pro_Secondary_Struct [] = cat app _pro_Secondary_Struct Chains[];
